@@ -31,11 +31,11 @@ class Turtlebot(object):
 
     def move(self, linear=0.0, angular=0.0):
         # Bounds checking
-        if abs(linear) > 1.0:
+        if abs(linear) > self.max_linear:
             self.say("Whoa! Slowing you down to within +/-{0} m/s...".format(self.max_linear))
             linear = self.max_linear if linear > self.max_linear else linear
             linear = -self.max_linear if linear < -self.max_linear else linear
-        if abs(angular):
+        if abs(angular) > self.max_angular:
             self.say("Whoa! Slowing you down to within +/-{0} rad/s...".format(self.max_angular))
             angular = self.max_angular if angular > self.max_angular else angular
             angular = -self.max_angular if angular < -self.max_angular else angular
