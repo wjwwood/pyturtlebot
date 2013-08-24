@@ -1,3 +1,3 @@
-from .turtlebot import Turtlebot
+from .turtlebot import get_robot
 
-__all__ = ['Turtlebot']
+__all__ = ['get_robot']

@@ -6,8 +6,20 @@ import rospy
 from kobuki_msgs.msg import BumperEvent
 from geometry_msgs.msg import Twist
 
+_turtlebot_singleton = None
+
+
+def get_robot():
+    global _turtlebot_singleton
+    if _turtlebot_singleton is None:
+        _turtlebot_singleton = Turtlebot()
+    return _turtlebot_singleton
+
 
 class Turtlebot(object):
+    max_linear = 1.0
+    max_angular = 2.0
+
     def __init__(self):
         rospy.init_node('pyturtlebot', anonymous=True)
         rospy.myargv(argv=sys.argv)
@@ -18,17 +30,28 @@ class Turtlebot(object):
         self.__bumper_sub = rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, self.__bumper_handler)
 
     def move(self, linear=0.0, angular=0.0):
+        # Bounds checking
+        if abs(linear) > 1.0:
+            self.say("Whoa! Slowing you down to within +/-{0} m/s...".format(self.max_linear))
+            linear = self.max_linear if linear > self.max_linear else linear
+            linear = -self.max_linear if linear < -self.max_linear else linear
+        if abs(angular):
+            self.say("Whoa! Slowing you down to within +/-{0} rad/s...".format(self.max_angular))
+            angular = self.max_angular if angular > self.max_angular else angular
+            angular = -self.max_angular if angular < -self.max_angular else angular
+        # Message generation
         msg = Twist()
         msg.linear.x = linear
         msg.angular.z = angular
-        self.say("Moving robot at '{0}' and '{1}', linear and angular velocities.".format(linear, angular))
+        # Announce and publish
+        self.say("Moving ('{linear}' m/s, '{angular}' rad/s)...".format(linear=linear, angular=angular))
         self.__cmd_vel_pub.publish(msg)
 
     def stop(self):
         msg = Twist()
         msg.linear.x = 0.0
         msg.angular.z = 0.0
-        self.say("Stopping robot!")
+        self.say("Stopping the robot!")
         self.__cmd_vel_pub.publish(msg)
 
     def wait(self, seconds):
