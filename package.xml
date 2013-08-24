@@ -17,4 +17,8 @@
 
   <run_depend>kobuki_msgs</run_depend>
   <run_depend>rospy</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>python-numpy</run_depend>
+
 </package>
