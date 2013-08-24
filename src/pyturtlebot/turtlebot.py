@@ -5,6 +5,7 @@ import numpy as np
 import rospy
 
 from kobuki_msgs.msg import BumperEvent
+from kobuki_msgs.msg import WheelDropEvent
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from tf import transformations as trans
@@ -35,11 +36,15 @@ class Turtlebot(object):
 
         self.on_bumper = None
 
+        self.movement_enabled = True
+
         self.__cmd_vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist)
         self.__bumper_sub = rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, self.__bumper_handler)
         self.__odom_sub = rospy.Subscriber('/odom', Odometry, self.__odom_handler)
+        self.__wheeldrop_sub = rospy.Subscriber('/mobile_base/events/wheel_drop', WheelDropEvent, self.__wheeldrop_handler)
 
     def move(self, linear=0.0, angular=0.0):
+        self._exit_if_movement_disabled()
         # Bounds checking
         if abs(linear) > self.max_linear:
             self.say("Whoa! Slowing you down to within +/-{0} m/s...".format(self.max_linear))
@@ -58,6 +63,7 @@ class Turtlebot(object):
         self.__cmd_vel_pub.publish(msg)
 
     def move_distance(self, distance, velocity=1.0):
+        self._exit_if_movement_disabled()
         # No bounds checking because we trust people. Not like William.
         r = rospy.Rate(1)
         while not self.__have_odom and not rospy.is_shutdown():
@@ -80,6 +86,7 @@ class Turtlebot(object):
         self.__cmd_vel_pub.publish(msg)
 
     def turn_angle(self, angle, velocity=1.0):
+        self._exit_if_movement_disabled()
         # No bounds checking because we trust people. Not like William.
         r = rospy.Rate(1)
         while not self.__have_odom and not rospy.is_shutdown():
@@ -142,3 +149,16 @@ class Turtlebot(object):
             return
         if self.on_bumper is not None:
             self.on_bumper.__call__()
+
+    def reset_movement(self):
+        self.movement_enabled = True
+
+    def _exit_if_movement_disabled(self):
+        if not self.movement_enabled:
+            self.say("Movement currently disabled")
+            # NOTE (jasdeep-hundal): This increases usability since this keeps us from having to hit the interrupt button
+            sys.exit()
+
+    def __wheeldrop_handler(self, msg):
+        if msg.state == WheelDropEvent.DROPPED:
+            self.movement_enabled = False
