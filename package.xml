@@ -20,5 +20,7 @@
   <run_depend>nav_msgs</run_depend>
   <run_depend>tf</run_depend>
   <run_depend>python-numpy</run_depend>
+  <run_depend>turtlebot_bringup</run_depend>
+  <run_depend>freenect_launch</run_depend>
 
 </package>

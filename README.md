@@ -6,7 +6,7 @@ This is a python library which abstracts the usage of Turtlebot2's to a simple P
 
 First you will need a Turtlebot2 with ROS Hydro installed and with all the turtlebot debs installed:
 
-    $ sudo apt-get install ros-hydro-turtlebot
+    $ sudo apt-get install ros-hydro-turtlebot ros-hydro-freenect-launch
 
 You will also need the `ipython-notebook` debs:
 
@@ -29,7 +29,7 @@ Next build the package after `source`'ing the environment setup file for hydro:
 
 You should get the ip address of the turtlebot and set the `ROS_HOSTNAME` in the `~/.bashrc`. You can get the ip address with `ipconfig`:
 
-    $ ipconfig
+    $ ifconfig
 
 Then set it in the `~/.bashrc` file like this (it should be modified if it already exists at the end of the file):
 
@@ -43,11 +43,15 @@ Remember to open a new terminal or source the `~/.bashrc` in the current termina
 
 First you will need to start the turtlebot2 software, I have provided a launch file in this package for convenience:
 
+    $ source ~/pyturtlebot/build/devel/setup.bash
     $ roslaunch pyturtlebot pyturtlebot.launch
 
-This will launch all of the ROS programs required to have the turtlebot up and running. Next run the ipython notebook:
+This will launch all of the ROS programs required to have the turtlebot up and running. If you get some errors about unloading nodelets, ROS may have been starting on boot. Stop it so you can run it locally by running `sudo service ros stop` before invoking the above `roslaunch` command.
 
-    $ ipython notebook --pylab --port=5555 --ip=* --notebook-dir=~/pyturtlebot/notebooks
+Next run the ipython notebook in another terminal:
+
+    $ source ~/pyturtlebot/build/devel/setup.bash
+    $ ipython notebook --pylab=inline --port=5555 --ip=* --notebook-dir=~/pyturtlebot/notebooks
 
 ## Using the demo
 
@@ -60,6 +64,11 @@ This should bring you to a page where you can open existing notebooks or create 
 ## Example Program
 
 ```python
+# -*- coding: utf-8 -*-
+# <nbformat>2</nbformat>
+
+# <codecell>
+
 from pyturtlebot import get_robot
 
 robot = get_robot()
@@ -67,7 +76,7 @@ robot = get_robot()
 # You can print messages to the screen with say
 robot.say('Robot is ready!')
 
-# ---
+# <codecell>
 
 # You can move the robot using the move(linear, angular) function
 # The linear velocity is in meters per second and the angular velocity is in radians per second
@@ -77,17 +86,20 @@ robot.move(0, 1.1)  # This call returns immediately
 robot.wait(0.6)
 robot.move(0, -1.1)
 
-# ---
+# <codecell>
 
 # You can also tell the robot to move a certain distance or turn to a certain angle
 # move_distance takes a distance in meters and a speed
 robot.say('Warning!!! The robot is about to move forward!!!')
 robot.wait(5)
-robot.move_distance(1, 1)  # This should take about 1 second to finish
+robot.move_distance(0.25, 0.5)  # This should take about 1/2 second to finish
 # turn angle takes a number of degress (radians) and an angular speed
-robot.turn_angle(radians(45), radians(45))  # This should also take about a second
+robot.turn_angle(radians(180), radians(180))  # This should take about a second
+# Then drive back and turn to face the same way you started!
+robot.move_distance(0.25, 0.5)
+robot.turn_angle(radians(-180), radians(180))
 
-# ---
+# <codecell>
 
 # You can run a function when the bumper is pressed
 def on_bumper():
@@ -98,9 +110,11 @@ def on_bumper():
 # Now when you press the bumper you should get a message saying 'OUCH!' and the robot should stop
 robot.on_bumper = on_bumper
 
-# ---
+# <codecell>
 
 # If your robot gets out of control and you have to pick it up
 # You must reset the wheel drop safety, like this:
 robot.reset_movement()
+
+# <codecell>
 ```
