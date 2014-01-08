@@ -67,7 +67,7 @@ robot = get_robot()
 # You can print messages to the screen with say
 robot.say('Robot is ready!')
 
-// ---
+# ---
 
 # You can move the robot using the move(linear, angular) function
 # The linear velocity is in meters per second and the angular velocity is in radians per second
@@ -77,7 +77,7 @@ robot.move(0, 1.1)  # This call returns immediately
 robot.wait(0.6)
 robot.move(0, -1.1)
 
-// ---
+# ---
 
 # You can also tell the robot to move a certain distance or turn to a certain angle
 # move_distance takes a distance in meters and a speed
@@ -87,7 +87,7 @@ robot.move_distance(1, 1)  # This should take about 1 second to finish
 # turn angle takes a number of degress (radians) and an angular speed
 robot.turn_angle(radians(45), radians(45))  # This should also take about a second
 
-// ---
+# ---
 
 # You can run a function when the bumper is pressed
 def on_bumper():
@@ -98,7 +98,7 @@ def on_bumper():
 # Now when you press the bumper you should get a message saying 'OUCH!' and the robot should stop
 robot.on_bumper = on_bumper
 
-// ---
+# ---
 
 # If your robot gets out of control and you have to pick it up
 # You must reset the wheel drop safety, like this:
