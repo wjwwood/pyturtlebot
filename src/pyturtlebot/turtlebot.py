@@ -41,7 +41,8 @@ class Turtlebot(object):
         self.__cmd_vel_pub = rospy.Publisher('/mobile_base/commands/velocity', Twist)
         self.__bumper_sub = rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, self.__bumper_handler)
         self.__odom_sub = rospy.Subscriber('/odom', Odometry, self.__odom_handler)
-        self.__wheeldrop_sub = rospy.Subscriber('/mobile_base/events/wheel_drop', WheelDropEvent, self.__wheeldrop_handler)
+        self.__wheeldrop_sub = rospy.Subscriber('/mobile_base/events/wheel_drop',
+                                                WheelDropEvent, self.__wheeldrop_handler)
 
     def move(self, linear=0.0, angular=0.0):
         self._exit_if_movement_disabled()
@@ -156,7 +157,6 @@ class Turtlebot(object):
     def _exit_if_movement_disabled(self):
         if not self.movement_enabled:
             self.say("Movement currently disabled")
-            # NOTE (jasdeep-hundal): This increases usability since this keeps us from having to hit the interrupt button
             sys.exit()
 
     def __wheeldrop_handler(self, msg):
