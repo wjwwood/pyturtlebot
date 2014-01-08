@@ -55,5 +55,5 @@ Point your browser at the turtlebot's ip, port `5555`:
 
     http://x.x.x.x:5555
 
-This should bring you to a page where you can open existing notebooks or create new ones. After creating a new notebook or selecting one of the existing ones you should be brought to a new page where you can program the turtlebot using the ipython notebook. You can write code in each of the blocks and execute the blocks by hitting `shift+enter`.
+This should bring you to a page where you can open existing notebooks or create new ones. After creating a new notebook or selecting one of the existing ones you should be brought to a new page where you can program the turtlebot using the ipython notebook. You can write code in each of the blocks and execute the blocks by hitting <kbd>SHIFT</kbd>+<kbd>ENTER</kbd>.
 
