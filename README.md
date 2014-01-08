@@ -57,3 +57,50 @@ Point your browser at the turtlebot's ip, port `5555`:
 
 This should bring you to a page where you can open existing notebooks or create new ones. After creating a new notebook or selecting one of the existing ones you should be brought to a new page where you can program the turtlebot using the ipython notebook. You can write code in each of the blocks and execute the blocks by hitting <kbd>SHIFT</kbd>+<kbd>ENTER</kbd>.
 
+## Example Program
+
+```python
+from pyturtlebot import get_robot
+
+robot = get_robot()
+
+# You can print messages to the screen with say
+robot.say('Robot is ready!')
+
+// ---
+
+# You can move the robot using the move(linear, angular) function
+# The linear velocity is in meters per second and the angular velocity is in radians per second
+# The move command stops after 1/2 second, so keep the robot moving you need to send command repeatedly
+robot.move(0, 1.1)  # This call returns immediately
+# But you can wait for any number of seconds before doing something else
+robot.wait(0.6)
+robot.move(0, -1.1)
+
+// ---
+
+# You can also tell the robot to move a certain distance or turn to a certain angle
+# move_distance takes a distance in meters and a speed
+robot.say('Warning!!! The robot is about to move forward!!!')
+robot.wait(5)
+robot.move_distance(1, 1)  # This should take about 1 second to finish
+# turn angle takes a number of degress (radians) and an angular speed
+robot.turn_angle(radians(45), radians(45))  # This should also take about a second
+
+// ---
+
+# You can run a function when the bumper is pressed
+def on_bumper():
+    robot.say('OUCH!')
+    # This will stop the robot
+    robot.stop()
+
+# Now when you press the bumper you should get a message saying 'OUCH!' and the robot should stop
+robot.on_bumper = on_bumper
+
+// ---
+
+# If your robot gets out of control and you have to pick it up
+# You must reset the wheel drop safety, like this:
+robot.reset_movement()
+```
