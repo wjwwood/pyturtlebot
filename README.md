@@ -117,4 +117,21 @@ robot.on_bumper = on_bumper
 robot.reset_movement()
 
 # <codecell>
+
+# You can make the robot play a sound
+robot.play_sound('cleaning end')
+
+# <codecell>
+
+# You can control the two led's on the robot
+robot.set_led(1, 'green')
+robot.set_led(2, 'orange')
+robot.wait(1)
+robot.set_led(1, 'red')
+robot.set_led(2, 'red')
+robot.wait(1)
+robot.set_led(1, 'off')
+robot.set_led(2, 'black')
+
+# <codecell>
 ```
