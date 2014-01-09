@@ -10,6 +10,7 @@ from kobuki_msgs.msg import Sound
 from kobuki_msgs.msg import WheelDropEvent
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
+from sensor_msgs.msg import LaserScan
 from tf import transformations as trans
 
 _turtlebot_singleton = None
@@ -45,6 +46,7 @@ class Turtlebot(object):
         self.__odom_sub = rospy.Subscriber('/odom', Odometry, self.__odom_handler)
         self.__wheeldrop_sub = rospy.Subscriber('/mobile_base/events/wheel_drop',
                                                 WheelDropEvent, self.__wheeldrop_handler)
+        self.__scan_sub = rospy.Subscriber('/scan', LaserScan, self.__scan_handler)
         self.__sound_pub = rospy.Publisher('/mobile_base/commands/sound', Sound)
         self.__led_pubs = {
             '1': rospy.Publisher('/mobile_base/commands/led1', Led),
@@ -246,6 +248,9 @@ class Turtlebot(object):
 
         self.__angle = a
         self.__have_odom = True
+
+    def __scan_handler(self, msg):
+        self.current_laser_msg = msg
 
     def __bumper_handler(self, msg):
         if msg.state != BumperEvent.PRESSED:
