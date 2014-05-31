@@ -3,6 +3,8 @@ import time
 import numpy as np
 import random
 
+from math import radians
+
 import rospy
 
 from kobuki_msgs.msg import BumperEvent
@@ -277,6 +279,22 @@ class Turtlebot(object):
 
     def reset_movement(self):
         self.movement_enabled = True
+
+    def show_laser(self):
+        from IPython import display
+        from pylab import subplot, show
+
+        lm = self.current_laser_msg
+        r = lm.ranges
+        theta = [radians(90) + lm.angle_min + i * lm.angle_increment for i, x in enumerate(r)]
+
+        ax = subplot(111, polar=True)
+        ax.plot(theta, r, color='r', linewidth=3)
+        ax.set_rmax(6)
+        ax.grid(True)
+
+        ax.set_title("A line plot of the laser data", va='bottom')
+        show()
 
     def __odom_handler(self, msg):
         self.__x = msg.pose.pose.position.x
