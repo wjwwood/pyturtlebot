@@ -1,6 +1,7 @@
 import sys
 import time
 import numpy as np
+import random
 
 import rospy
 
@@ -226,6 +227,53 @@ class Turtlebot(object):
             self.say("!! Invalid led color '{0}', must be one of: {1}".format(color, self.led_colors))
             return
         self.__led_pubs[str(led)].publish(Led(self.led_colors[color]))
+
+    def get_ranges(self):
+        return self.current_laser_msg.ranges
+
+    def say_ranges(self):
+	msg = self.current_laser_msg
+	rngs = msg.ranges
+	self.say("range angle_min is {0}".format(msg.angle_min))
+	self.say("range angle_max is {0}".format(msg.angle_max))
+	self.say("range size is {0}".format(len(rngs)))
+	self.say("range min is {0}".format(msg.range_min))
+	self.say("range max is {0}".format(msg.range_max))
+
+	for i in range(0, 63):
+	    rng_pos = i * 10
+	    self.say("Range {0} is {1}".format(rng_pos, rngs[rng_pos]))
+	    rng_pos += 5
+	    self.say("Range {0} is {1}".format(rng_pos, rngs[rng_pos]))
+
+    def index_to_rad(self, idx):
+        msg = self.current_laser_msg
+        rng = msg.angle_max
+        rlen = len(msg.ranges)
+        self.say("rng: " + str(rng))
+        self.say("rlen: " + str(rlen))
+        return -(rlen / 2.0 - idx) * rng / (rlen / 2.0)
+    
+    def turn_around(self):
+        self.turn_angle(np.pi)
+
+    def random_angle(self):
+        return random.uniform(-np.pi,np.pi)
+
+    def turn_random(self):
+        self.turn_angle(self.random_angle())
+
+    def find_closest(self):
+        msg = self.current_laser_msg
+        rngs = msg.ranges
+        idx = np.nanargmin(rngs)
+        self.say("idx: " + str(idx))                
+        rad = self.index_to_rad(idx)
+        return rngs[idx], rad
+
+    def point_at_closest(self):
+	rng, rad = self.find_closest()
+	self.turn_angle(rad)
 
     def reset_movement(self):
         self.movement_enabled = True
